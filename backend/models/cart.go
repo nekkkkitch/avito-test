@@ -1,9 +1,27 @@
 package models
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Cart struct {
-	ID       uuid.UUID `json:"id" validate:"required"`
-	UserID   uuid.UUID `json:"user_id" validate:"required"`
-	Products []Product `json:"products"`
+	ID         uuid.UUID  `json:"id"`
+	UserID     uuid.UUID  `json:"user_id"`
+	Products   []Product  `json:"products"`
+	InProcess  bool       `json:"in_process"`
+	FinishedAt *time.Time `json:"finished_at"`
+}
+
+type Order struct {
+	ID       uuid.UUID              `json:"id"`
+	UserID   uuid.UUID              `json:"user_id"`
+	Products map[string][]uuid.UUID `json:"products"`
+}
+
+type SingleOrder struct {
+	ID       uuid.UUID   `json:"id"`
+	UserID   uuid.UUID   `json:"user_id"`
+	Products []uuid.UUID `json:"products"`
 }
