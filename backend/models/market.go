@@ -10,6 +10,6 @@ type Market struct {
 type Filter struct {
 	MarketsID []uuid.UUID `json:"market_id"`
 	Title     string      `json:"title"`
-	MinPrice  int         `json:"min_price"`
-	MaxPrice  int         `json:"max_price"`
+	MinPrice  int         `json:"min_price" validate:"min=1,max=99999999"`
+	MaxPrice  int         `json:"max_price" validate:"min=1,max=99999999"`
 }
