@@ -2,6 +2,7 @@ package api
 
 import (
 	"backend/models"
+	"context"
 	"fmt"
 	"log/slog"
 
@@ -10,8 +11,8 @@ import (
 )
 
 type SExternal interface {
-	SetProduct([]models.Product) error
-	DeleteProduct(id uuid.UUID) error
+	SetProduct(ctx context.Context, products []models.Product) error
+	DeleteProduct(ctx context.Context, id uuid.UUID) error
 }
 
 func (a *API) SetProduct(c fiber.Ctx) error {
@@ -28,7 +29,7 @@ func (a *API) SetProduct(c fiber.Ctx) error {
 		}
 	}
 
-	if err := a.ext.SetProduct(products); err != nil {
+	if err := a.ext.SetProduct(c.Context(), products); err != nil {
 		return mapError(err)
 	}
 
@@ -51,7 +52,7 @@ func (a *API) DeleteProduct(c fiber.Ctx) error {
 		return fiber.NewError(fiber.ErrBadRequest.Code, "bad body")
 	}
 
-	if err := a.ext.DeleteProduct(req.ID); err != nil {
+	if err := a.ext.DeleteProduct(c.Context(), req.ID); err != nil {
 		return mapError(err)
 	}
 

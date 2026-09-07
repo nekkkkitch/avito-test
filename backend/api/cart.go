@@ -9,13 +9,15 @@ import (
 )
 
 type SCart interface {
-	AddProductToCart(userID, productID uuid.UUID) error
-	DeleteProductFromCart(userID, productID uuid.UUID) error
+	AddProductToCart(cartID, userID, productID uuid.UUID) error
+	DeleteProductFromCart(cartID, userID, productID uuid.UUID) error
 	GetCart(userID uuid.UUID) (models.Cart, error)
-	Order(userID uuid.UUID) error
+	Order(cartID, userID uuid.UUID) error
+	// todo add get history
 }
 
 type AddToCartReq struct {
+	CartID    uuid.UUID `json:"cart_id" validate:"required"`
 	UserID    uuid.UUID `json:"user_id" validate:"required"`
 	ProductID uuid.UUID `json:"product_id" validate:"required"`
 }
@@ -32,7 +34,7 @@ func (a *API) AddProductToCart(c fiber.Ctx) error {
 		return fiber.NewError(fiber.ErrBadRequest.Code, "bad body")
 	}
 
-	err := a.cart.AddProductToCart(req.UserID, req.ProductID)
+	err := a.cart.AddProductToCart(req.CartID, req.UserID, req.ProductID)
 	if err != nil {
 		return mapError(err)
 	}
@@ -41,6 +43,7 @@ func (a *API) AddProductToCart(c fiber.Ctx) error {
 }
 
 type DeleteFromCartReq struct {
+	CartID    uuid.UUID `json:"cart_id" validate:"required"`
 	UserID    uuid.UUID `json:"user_id" validate:"required"`
 	ProductID uuid.UUID `json:"product_id" validate:"required"`
 }
@@ -57,7 +60,7 @@ func (a *API) DeleteProductFromCart(c fiber.Ctx) error {
 		return fiber.NewError(fiber.ErrBadRequest.Code, "bad body")
 	}
 
-	err := a.cart.DeleteProductFromCart(req.UserID, req.ProductID)
+	err := a.cart.DeleteProductFromCart(req.CartID, req.UserID, req.ProductID)
 	if err != nil {
 		return mapError(err)
 	}
@@ -94,6 +97,7 @@ func (a *API) GetCart(c fiber.Ctx) error {
 }
 
 type OrderReq struct {
+	CartID uuid.UUID `json:"cart_id" validate:"required"`
 	UserID uuid.UUID `json:"user_id" validate:"required"`
 }
 
@@ -109,7 +113,7 @@ func (a *API) Order(c fiber.Ctx) error {
 		return fiber.NewError(fiber.ErrBadRequest.Code, "bad body")
 	}
 
-	err := a.cart.Order(req.UserID)
+	err := a.cart.Order(req.CartID, req.UserID)
 	if err != nil {
 		return mapError(err)
 	}

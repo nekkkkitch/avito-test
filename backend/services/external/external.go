@@ -2,13 +2,14 @@ package external
 
 import (
 	"backend/models"
+	"context"
 
 	"github.com/google/uuid"
 )
 
 type RDBExternal interface {
-	SetProduct([]models.Product) error
-	DeleteProduct(id uuid.UUID) error
+	SetProduct(ctx context.Context, products []models.Product) error
+	DeleteProduct(ctx context.Context, id uuid.UUID) error
 }
 
 type Service struct {
@@ -21,10 +22,10 @@ func New(e RDBExternal) *Service {
 	}
 }
 
-func (s *Service) SetProduct(products []models.Product) error {
-	return s.external.SetProduct(products)
+func (s *Service) SetProduct(ctx context.Context, products []models.Product) error {
+	return s.external.SetProduct(ctx, products)
 }
 
-func (s *Service) DeleteProduct(id uuid.UUID) error {
-	return s.external.DeleteProduct(id)
+func (s *Service) DeleteProduct(ctx context.Context, id uuid.UUID) error {
+	return s.external.DeleteProduct(ctx, id)
 }

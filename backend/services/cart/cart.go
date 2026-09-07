@@ -2,6 +2,7 @@ package cart
 
 import (
 	"backend/models"
+	"context"
 	"fmt"
 
 	"github.com/gofiber/fiber/v3/client"
@@ -9,10 +10,11 @@ import (
 )
 
 type RDBCart interface {
-	AddProduct(userID, productID uuid.UUID) error
-	DeleteProduct(userID, productID uuid.UUID) error
-	Order(userID uuid.UUID) (models.Order, error)
-	FinishOrder(orderID uuid.UUID) error
+	GetCart(ctx context.Context, userID uuid.UUID) (models.Cart, error)
+	AddProduct(ctx context.Context, cartID, userID, productID uuid.UUID) error
+	DeleteProduct(ctx context.Context, cartID, userID, productID uuid.UUID) error
+	Order(ctx context.Context, cartID, userID uuid.UUID) (models.Order, error)
+	FinishOrder(ctx context.Context, orderID uuid.UUID) error
 }
 
 type Service struct {
@@ -25,12 +27,16 @@ func New(c RDBCart) *Service {
 	}
 }
 
-func (s *Service) AddProductToCart(userID, productID uuid.UUID) error {
-	return s.cart.AddProduct(userID, productID)
+func (s *Service) GetCart(ctx context.Context, userID uuid.UUID) (models.Cart, error) {
+	return s.cart.GetCart(ctx, userID)
 }
 
-func (s *Service) DeleteProductFromCart(userID, productID uuid.UUID) error {
-	return s.cart.DeleteProduct(userID, productID)
+func (s *Service) AddProductToCart(ctx context.Context, cartID, userID, productID uuid.UUID) error {
+	return s.cart.AddProduct(ctx, cartID, userID, productID)
+}
+
+func (s *Service) DeleteProductFromCart(ctx context.Context, cartID, userID, productID uuid.UUID) error {
+	return s.cart.DeleteProduct(ctx, cartID, userID, productID)
 }
 
 type Order struct {
@@ -38,8 +44,8 @@ type Order struct {
 	Products []uuid.UUID `json:"products"`
 }
 
-func (s *Service) Order(userID uuid.UUID) error {
-	cart, err := s.cart.Order(userID)
+func (s *Service) Order(ctx context.Context, cartID, userID uuid.UUID) error {
+	cart, err := s.cart.Order(ctx, cartID, userID)
 	if err != nil {
 		return err
 	}
@@ -57,7 +63,7 @@ func (s *Service) Order(userID uuid.UUID) error {
 		}
 	}
 
-	err = s.cart.FinishOrder(userID)
+	err = s.cart.FinishOrder(ctx, cartID)
 	if err != nil {
 		return err
 	}
