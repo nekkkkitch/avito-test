@@ -1,9 +1,9 @@
 package cart
 
 import (
-	"backend/models"
 	"context"
-	"fmt"
+
+	"backend/models"
 
 	"github.com/gofiber/fiber/v3/client"
 	"github.com/google/uuid"
@@ -56,8 +56,9 @@ func (s *Service) Order(ctx context.Context, cartID, userID uuid.UUID) error {
 			UserID:   userID,
 			Products: cart.Products[k],
 		}
-		_, err := client.Post(fmt.Sprint("http://"+k+"/order"), client.Config{
-			Body: miniOrder})
+		_, err := client.Post("http://"+k+"/order", client.Config{
+			Body: miniOrder,
+		})
 		if err != nil {
 			return err
 		}

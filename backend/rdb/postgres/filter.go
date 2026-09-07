@@ -1,9 +1,9 @@
 package rdb
 
 import (
-	"backend/models"
 	"context"
 
+	"backend/models"
 	"github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
 )
@@ -52,7 +52,7 @@ func (q *Queries) FilterProducts(ctx context.Context, filter models.Filter) ([]m
 		err := rows.Scan(
 			&product.ID,
 			&product.MarketID,
-			&product.Name,
+			&product.Title,
 			&product.Price,
 		)
 		if err != nil {

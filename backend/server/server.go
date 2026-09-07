@@ -1,32 +1,30 @@
-package api
+package server
 
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 )
 
-type API struct {
+type Server struct {
 	app    *fiber.App
-	market SMarket
-	cart   SCart
-	ext    SExternal
+	market ProductsSvc
+	cart   CartSvc
+	ext    ExternalSvc
 	val    *validator.Validate
 }
 
-func New(m SMarket, c SCart, e SExternal) *API {
-	app := fiber.New(fiber.Config{
-		BodyLimit: 10 * 1024 * 1024,
-	})
-	return &API{
+func New(app *fiber.App, m ProductsSvc, c CartSvc, e ExternalSvc) *Server {
+	s := &Server{
 		app:    app,
 		market: m,
 		cart:   c,
 		ext:    e,
 		val:    validator.New(validator.WithRequiredStructEnabled()),
 	}
+	return s
 }
 
-func (a *API) SetupRoutes() {
+func (a *Server) SetupRoutes() {
 	api := a.app.Group("/api")
 
 	api.Get("/markets", a.GetMarkets)

@@ -1,18 +1,20 @@
-package api
+package server
 
 import (
-	"backend/models"
+	"context"
 	"log/slog"
+
+	"backend/models"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 )
 
-type SCart interface {
-	AddProductToCart(cartID, userID, productID uuid.UUID) error
-	DeleteProductFromCart(cartID, userID, productID uuid.UUID) error
-	GetCart(userID uuid.UUID) (models.Cart, error)
-	Order(cartID, userID uuid.UUID) error
+type CartSvc interface {
+	AddProductToCart(ctx context.Context, cartID, userID, productID uuid.UUID) error
+	DeleteProductFromCart(ctx context.Context, cartID, userID, productID uuid.UUID) error
+	GetCart(ctx context.Context, userID uuid.UUID) (models.Cart, error)
+	Order(ctx context.Context, cartID, userID uuid.UUID) error
 	// todo add get history
 }
 
@@ -22,7 +24,7 @@ type AddToCartReq struct {
 	ProductID uuid.UUID `json:"product_id" validate:"required"`
 }
 
-func (a *API) AddProductToCart(c fiber.Ctx) error {
+func (a *Server) AddProductToCart(c fiber.Ctx) error {
 	var req AddToCartReq
 	if err := c.Bind().Body(&req); err != nil {
 		slog.Error("API: AddProductToCart: can't bind body", "err", err)
@@ -34,7 +36,7 @@ func (a *API) AddProductToCart(c fiber.Ctx) error {
 		return fiber.NewError(fiber.ErrBadRequest.Code, "bad body")
 	}
 
-	err := a.cart.AddProductToCart(req.CartID, req.UserID, req.ProductID)
+	err := a.cart.AddProductToCart(c.Context(), req.CartID, req.UserID, req.ProductID)
 	if err != nil {
 		return mapError(err)
 	}
@@ -48,7 +50,7 @@ type DeleteFromCartReq struct {
 	ProductID uuid.UUID `json:"product_id" validate:"required"`
 }
 
-func (a *API) DeleteProductFromCart(c fiber.Ctx) error {
+func (a *Server) DeleteProductFromCart(c fiber.Ctx) error {
 	var req DeleteFromCartReq
 	if err := c.Bind().Body(&req); err != nil {
 		slog.Error("API: DeleteProductFromCart: can't bind body", "err", err)
@@ -60,7 +62,7 @@ func (a *API) DeleteProductFromCart(c fiber.Ctx) error {
 		return fiber.NewError(fiber.ErrBadRequest.Code, "bad body")
 	}
 
-	err := a.cart.DeleteProductFromCart(req.CartID, req.UserID, req.ProductID)
+	err := a.cart.DeleteProductFromCart(c.Context(), req.CartID, req.UserID, req.ProductID)
 	if err != nil {
 		return mapError(err)
 	}
@@ -71,7 +73,7 @@ type GetCartReq struct {
 	UserID uuid.UUID `json:"user_id" validate:"required"`
 }
 
-func (a *API) GetCart(c fiber.Ctx) error {
+func (a *Server) GetCart(c fiber.Ctx) error {
 	var req GetCartReq
 	if err := c.Bind().Body(&req); err != nil {
 		slog.Error("API: GetCart: can't bind body", "err", err)
@@ -83,7 +85,7 @@ func (a *API) GetCart(c fiber.Ctx) error {
 		return fiber.NewError(fiber.ErrBadRequest.Code, "bad body")
 	}
 
-	cart, err := a.cart.GetCart(req.UserID)
+	cart, err := a.cart.GetCart(c.Context(), req.UserID)
 	if err != nil {
 		return mapError(err)
 	}
@@ -101,7 +103,7 @@ type OrderReq struct {
 	UserID uuid.UUID `json:"user_id" validate:"required"`
 }
 
-func (a *API) Order(c fiber.Ctx) error {
+func (a *Server) Order(c fiber.Ctx) error {
 	var req OrderReq
 	if err := c.Bind().Body(&req); err != nil {
 		slog.Error("API: Order: can't bind body", "err", err)
@@ -113,7 +115,7 @@ func (a *API) Order(c fiber.Ctx) error {
 		return fiber.NewError(fiber.ErrBadRequest.Code, "bad body")
 	}
 
-	err := a.cart.Order(req.CartID, req.UserID)
+	err := a.cart.Order(c.Context(), req.CartID, req.UserID)
 	if err != nil {
 		return mapError(err)
 	}

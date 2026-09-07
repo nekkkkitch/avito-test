@@ -1,17 +1,19 @@
 package repo
 
 import (
+	"context"
+
 	"backend/models"
 	rdb "backend/rdb/postgres"
-	"context"
+	"github.com/google/uuid"
 )
 
 type ProductsRepo struct {
 	q *rdb.Queries
 }
 
-func NewProductsRepo(q *rdb.Queries) *ProductsRepo {
-	return &ProductsRepo{q: q}
+func NewProductsRepo(q *rdb.Queries) ProductsRepo {
+	return ProductsRepo{q: q}
 }
 
 func (p *ProductsRepo) GetMarkets(ctx context.Context) ([]models.Market, error) {
@@ -30,4 +32,12 @@ func (p *ProductsRepo) GetMarkets(ctx context.Context) ([]models.Market, error) 
 
 func (p *ProductsRepo) FilterProducts(ctx context.Context, filter models.Filter) ([]models.Product, error) {
 	return p.q.FilterProducts(ctx, filter)
+}
+
+func (p *ProductsRepo) GetProductCard(ctx context.Context, id uuid.UUID) (models.Product, error) {
+	res, err := p.q.GetProductCard(ctx, id)
+	if err != nil {
+		return models.Product{}, err
+	}
+	return models.Product{ID: res.ID, MarketID: res.MarketID, Title: res.Title, Price: res.Price}, nil
 }

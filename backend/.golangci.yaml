@@ -1,0 +1,57 @@
+version: "2"
+
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  default: standard
+  enable:
+    - bodyclose
+    - copyloopvar
+    - errorlint
+    - gocritic
+    - gosec
+    - misspell
+    - nilerr
+    - prealloc
+    - revive
+    - unconvert
+    - unparam
+    - wastedassign
+    - whitespace
+    - nlreturn
+
+  settings:
+    govet:
+      enable-all: true
+    revive:
+      rules:
+        - name: exported
+          disabled: true
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - performance
+        - style
+
+  exclusions:
+    generated: lax
+    rules:
+      - path: _test\.go
+        linters:
+          - gosec
+          - unparam
+
+formatters:
+  enable:
+    - gofumpt
+    - gci
+  settings:
+    gci:
+      # порядок групп: стандартные, локальные, сторонние
+      custom-order: true
+      sections:
+        - standard
+        - prefix(github.com/nekkkkitch/dndhh)
+        - default
