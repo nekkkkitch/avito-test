@@ -17,24 +17,10 @@ const docTemplate = `{
     "paths": {
         "/api/cart": {
             "get": {
-                "consumes": [
-                    "application/json"
-                ],
                 "tags": [
                     "cart"
                 ],
                 "summary": "Get cart",
-                "parameters": [
-                    {
-                        "description": "Get cart by user",
-                        "name": "getCartRequest",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/server.GetCartReq"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -516,17 +502,6 @@ const docTemplate = `{
             ],
             "properties": {
                 "id": {
-                    "type": "string"
-                }
-            }
-        },
-        "server.GetCartReq": {
-            "type": "object",
-            "required": [
-                "user_id"
-            ],
-            "properties": {
-                "user_id": {
                     "type": "string"
                 }
             }

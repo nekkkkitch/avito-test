@@ -99,13 +99,6 @@ definitions:
     required:
     - id
     type: object
-  server.GetCartReq:
-    properties:
-      user_id:
-        type: string
-    required:
-    - user_id
-    type: object
   server.OrderReq:
     properties:
       cart_id:
@@ -125,15 +118,6 @@ info:
 paths:
   /api/cart:
     get:
-      consumes:
-      - application/json
-      parameters:
-      - description: Get cart by user
-        in: body
-        name: getCartRequest
-        required: true
-        schema:
-          $ref: '#/definitions/server.GetCartReq'
       responses:
         "200":
           description: OK
