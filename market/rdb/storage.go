@@ -96,7 +96,6 @@ func (r *MemoryRepo) SaveOrder(ctx context.Context, order models.Order) error {
 	}
 
 	r.orders[order.ID] = order
-	slog.Info("", "r.orders", r.orders)
 	return nil
 }
 
@@ -105,7 +104,6 @@ func (r *MemoryRepo) ListOrders(ctx context.Context) ([]models.Order, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
-	slog.Info("", "r.orders", r.orders)
 	orders := make([]models.Order, 0, len(r.orders))
 	for _, order := range r.orders {
 		orders = append(orders, order)

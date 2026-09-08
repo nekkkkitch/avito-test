@@ -15,29 +15,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/products": {
-            "get": {
-                "tags": [
-                    "orders"
-                ],
-                "summary": "List orders",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Order"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request",
-                        "schema": {}
-                    }
-                }
-            }
-        },
         "/order": {
             "post": {
                 "consumes": [
@@ -148,6 +125,29 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/products": {
+            "get": {
+                "tags": [
+                    "orders"
+                ],
+                "summary": "List orders",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Order"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {}
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -216,7 +216,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8081",
-	BasePath:         "/",
+	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Market API",
 	Description:      "Market service API",

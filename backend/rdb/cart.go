@@ -149,12 +149,13 @@ func (c *CartRepo) Order(ctx context.Context, cartID, userID uuid.UUID) (models.
 	}
 
 	defer tx.Rollback(ctx)
-	err = c.q.OrderStartProcess(ctx, cartID)
+	qtx := c.q.WithTx(tx)
+	err = qtx.OrderStartProcess(ctx, cartID)
 	if err != nil {
 		slog.Error("CartRepo: Order: returned error", "err", err)
 		return models.Order{}, err
 	}
-	reqProducts, err := c.q.GetProductsForOrder(ctx, cartID)
+	reqProducts, err := qtx.GetProductsForOrder(ctx, cartID)
 	if err != nil {
 		slog.Error("CartRepo: Order: returned error", "err", err)
 		return models.Order{}, err

@@ -31,5 +31,7 @@ services:
     build:
       context: ../market
       dockerfile: Dockerfile
+    depends_on:
+      - backend
     ports:
       - "8081:8081"

@@ -101,8 +101,6 @@ type GetCartReq struct {
 
 // @Tags cart
 // @Summary Get cart
-// @Accept json
-// @Param getCartRequest body GetCartReq true "Get cart by user"
 // @Success 200 {object} models.Cart
 // @Failure 400 {object} error "Bad request"
 // @Failure 401 {object} error "Unauthorized"
@@ -112,17 +110,8 @@ type GetCartReq struct {
 func (a *Server) GetCart(c fiber.Ctx) error {
 	slog.Info("Server: GetCart: got called", "body", c.Body())
 	var req GetCartReq
-	if err := c.Bind().Body(&req); err != nil {
-		slog.Error("API: GetCart: can't bind body", "err", err)
-		return fiber.NewError(fiber.ErrBadRequest.Code, "bad body")
-	}
 
 	req.UserID = models.TestUserId
-	if err := a.val.Struct(req); err != nil {
-		slog.Error("API: GetCart: can't bind body", "err", err)
-		return fiber.NewError(fiber.ErrBadRequest.Code, "bad body")
-	}
-
 	cart, err := a.cart.GetCart(c.Context(), req.UserID)
 	if err != nil {
 		return mapError(err)

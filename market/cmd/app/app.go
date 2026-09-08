@@ -36,6 +36,8 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	srv := server.New(fiberApp, productsSvc, externalSvc, ordersSvc, cfg.MainServer.URL)
 	srv.SetupRoutes()
 
+	externalSvc.SaveProduct(context.Background(), models.Product{ID: uuid.New(), MarketID: models.MarketID, Title: "Test Product", Price: 12999})
+
 	return &App{
 		cfg:    cfg,
 		fiber:  fiberApp,

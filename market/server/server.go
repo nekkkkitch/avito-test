@@ -18,7 +18,7 @@ import (
 // @version 1.0
 // @description Market service API
 // @host localhost:8081
-// @BasePath /
+// @BasePath /api
 
 type ProductService interface {
 	ListProducts(ctx context.Context) ([]models.Product, error)
@@ -79,7 +79,7 @@ func (s *Server) Ping(c fiber.Ctx) error {
 // @Success 200 {object} []models.Product
 // @Failure 400 {object} error "Bad request"
 // @Failure 502 {object} error "Main server notification failed"
-// @Router /api/products [get]
+// @Router /products [get]
 func (s *Server) ListProducts(c fiber.Ctx) error {
 	slog.Info("Server: ListProducts: got called")
 	products, err := s.productsSvc.ListProducts(c.Context())
@@ -182,11 +182,9 @@ func (s *Server) SaveOrder(c fiber.Ctx) error {
 		slog.Error("Server: SaveOrder: bind", "err", err)
 		return fiber.NewError(fiber.StatusBadRequest, "bad body")
 	}
-	slog.Info("1")
 	if order.ID == uuid.Nil || order.UserID == uuid.Nil || len(order.Products) == 0 {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid order")
 	}
-	slog.Info("2")
 	if err := s.ordersSvc.SaveOrder(c.Context(), order); err != nil {
 		slog.Error("Server: SaveOrder: save", "err", err)
 		if err.Error() == "duplicate order id" {
@@ -203,7 +201,7 @@ func (s *Server) SaveOrder(c fiber.Ctx) error {
 // @Summary List orders
 // @Success 200 {object} []models.Order
 // @Failure 400 {object} error "Bad request"
-// @Router /api/products [get]
+// @Router /products [get]
 func (s *Server) ListOrders(c fiber.Ctx) error {
 	slog.Info("Server: ListOrder: got called")
 

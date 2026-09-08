@@ -1,4 +1,4 @@
-basePath: /
+basePath: /api
 definitions:
   models.Order:
     properties:
@@ -46,21 +46,6 @@ info:
   title: Market API
   version: "1.0"
 paths:
-  /api/products:
-    get:
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Order'
-            type: array
-        "400":
-          description: Bad request
-          schema: {}
-      summary: List orders
-      tags:
-      - orders
   /order:
     post:
       consumes:
@@ -135,4 +120,19 @@ paths:
       summary: Save or update product
       tags:
       - products
+  /products:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Order'
+            type: array
+        "400":
+          description: Bad request
+          schema: {}
+      summary: List orders
+      tags:
+      - orders
 swagger: "2.0"
