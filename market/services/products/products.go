@@ -2,9 +2,10 @@ package products
 
 import (
 	"context"
-	"market/models"
+	"log/slog"
 
 	"github.com/google/uuid"
+	"market/models"
 )
 
 type MarketRepo interface {
@@ -21,9 +22,11 @@ func New(repo MarketRepo) *Service {
 }
 
 func (s *Service) ListProducts(ctx context.Context) ([]models.Product, error) {
+	slog.Info("ProductsService: ListProducts: got called")
 	return s.repo.ListProducts(ctx)
 }
 
 func (s *Service) GetProductByID(ctx context.Context, id uuid.UUID) (models.Product, error) {
+	slog.Info("ProductsService: GetProductByID: got called", "id", id)
 	return s.repo.GetProductByID(ctx, id)
 }

@@ -17,6 +17,7 @@ type Cart struct {
 }
 
 type CartsContent struct {
+	ID        pgtype.Int4
 	CartID    uuid.UUID
 	ProductID uuid.UUID
 }

@@ -5,11 +5,9 @@ definitions:
       id:
         type: string
       products:
-        additionalProperties:
-          items:
-            type: string
-          type: array
-        type: object
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
       user_id:
         type: string
     type: object
@@ -53,6 +51,21 @@ info:
   title: Market API
   version: "1.0"
 paths:
+  /api/products:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Order'
+            type: array
+        "400":
+          description: Bad request
+          schema: {}
+      summary: List orders
+      tags:
+      - orders
   /order:
     post:
       consumes:

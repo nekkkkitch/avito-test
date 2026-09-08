@@ -27,6 +27,7 @@ type ExternalSvc interface {
 // @Failure 500 {object} error "Internal Server Error"
 // @Router /api/product [post]
 func (a *Server) SetProduct(c fiber.Ctx) error {
+	slog.Info("Server: SetProduct: got called", "body", c.Body())
 	var products []models.Product
 	if err := c.Bind().Body(&products); err != nil {
 		slog.Error("API: SetProduct: can't bind body", "err", err)
@@ -61,6 +62,7 @@ type DeleteProductRequest struct {
 // @Failure 500 {object} error "Internal Server Error"
 // @Router /api/product/{id} [delete]
 func (a *Server) DeleteProduct(c fiber.Ctx) error {
+	slog.Info("Server: DeleteProduct: got called", "body", c.Body())
 	var req DeleteProductRequest
 	if err := c.Bind().Body(&req); err != nil {
 		slog.Error("API: DeleteProduct: can't bind body", "err", err)

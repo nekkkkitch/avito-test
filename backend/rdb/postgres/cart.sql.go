@@ -9,6 +9,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const addToCart = `-- name: AddToCart :exec
@@ -43,8 +44,7 @@ func (q *Queries) CreateCart(ctx context.Context, userID uuid.UUID) (Cart, error
 
 const deleteFromCart = `-- name: DeleteFromCart :exec
 delete from carts_content 
-where product_id in 
-(select product_id from carts_content c where c.cart_id = $1 and c.product_id = $2 limit 1)
+where id in (select id from carts_content c where c.cart_id = $1 and c.product_id = $2 limit 1)
 `
 
 type DeleteFromCartParams struct {
@@ -58,7 +58,7 @@ func (q *Queries) DeleteFromCart(ctx context.Context, arg DeleteFromCartParams) 
 }
 
 const finishOrder = `-- name: FinishOrder :exec
-update carts set finished_at = now() where id = $1
+update carts set ordered_at = now() where id = $1
 `
 
 func (q *Queries) FinishOrder(ctx context.Context, id uuid.UUID) error {
@@ -67,7 +67,7 @@ func (q *Queries) FinishOrder(ctx context.Context, id uuid.UUID) error {
 }
 
 const getCart = `-- name: GetCart :one
-select id, user_id, in_process, ordered_at from carts where user_id = $1 and finished_at is null
+select id, user_id, in_process, ordered_at from carts where user_id = $1 and ordered_at is null
 `
 
 func (q *Queries) GetCart(ctx context.Context, userID uuid.UUID) (Cart, error) {
@@ -83,7 +83,7 @@ func (q *Queries) GetCart(ctx context.Context, userID uuid.UUID) (Cart, error) {
 }
 
 const getCartProducts = `-- name: GetCartProducts :many
-select id, market_id, title, price, cart_id, product_id from products p join carts_content c on p.id = c.product_id where c.cart_id = $1
+select p.id, market_id, title, price, c.id, cart_id, product_id from products p join carts_content c on p.id = c.product_id where c.cart_id = $1
 `
 
 type GetCartProductsRow struct {
@@ -91,6 +91,7 @@ type GetCartProductsRow struct {
 	MarketID  uuid.UUID
 	Title     string
 	Price     int
+	ID_2      pgtype.Int4
 	CartID    uuid.UUID
 	ProductID uuid.UUID
 }
@@ -109,6 +110,7 @@ func (q *Queries) GetCartProducts(ctx context.Context, cartID uuid.UUID) ([]GetC
 			&i.MarketID,
 			&i.Title,
 			&i.Price,
+			&i.ID_2,
 			&i.CartID,
 			&i.ProductID,
 		); err != nil {
@@ -123,7 +125,7 @@ func (q *Queries) GetCartProducts(ctx context.Context, cartID uuid.UUID) ([]GetC
 }
 
 const getProductsForOrder = `-- name: GetProductsForOrder :many
-select p.id, market_id, p.title, price, cart_id, product_id, m.id, m.title, api_link from products p join carts_content c on p.id = c.product_id join markets m on p.market_id = m.id where c.cart_id = $1
+select p.id, market_id, p.title, price, c.id, cart_id, product_id, m.id, m.title, api_link from products p join carts_content c on p.id = c.product_id join markets m on p.market_id = m.id where c.cart_id = $1
 `
 
 type GetProductsForOrderRow struct {
@@ -131,9 +133,10 @@ type GetProductsForOrderRow struct {
 	MarketID  uuid.UUID
 	Title     string
 	Price     int
+	ID_2      pgtype.Int4
 	CartID    uuid.UUID
 	ProductID uuid.UUID
-	ID_2      uuid.UUID
+	ID_3      uuid.UUID
 	Title_2   string
 	ApiLink   string
 }
@@ -152,9 +155,10 @@ func (q *Queries) GetProductsForOrder(ctx context.Context, cartID uuid.UUID) ([]
 			&i.MarketID,
 			&i.Title,
 			&i.Price,
+			&i.ID_2,
 			&i.CartID,
 			&i.ProductID,
-			&i.ID_2,
+			&i.ID_3,
 			&i.Title_2,
 			&i.ApiLink,
 		); err != nil {

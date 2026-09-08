@@ -4,8 +4,11 @@ start:
 rebuild_main:
 	sudo docker rmi deploy-backend -f && make start
 
-rebuild_ext:
+rebuild_market:
 	sudo docker rmi deploy-market -f && make start
+
+full_rebuild:
+	sudo docker rmi deploy-market -f && sudo docker rmi deploy-backend -f && sudo docker container rm -f deploy-postgres-1 && make start
 
 swag_main:
 	swag init --parseDependencyLevel 1 -d ../backend/server --generalInfo ../server/server.go -o ../backend/api/

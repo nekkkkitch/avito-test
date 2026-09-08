@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"market/config"
+	"market/models"
 	repo "market/rdb"
 	"market/server"
 	"market/services/external"
@@ -14,6 +15,7 @@ import (
 	"market/services/products"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/google/uuid"
 )
 
 type App struct {
@@ -23,13 +25,13 @@ type App struct {
 }
 
 func New(ctx context.Context, cfg *config.Config) (*App, error) {
-	_ = ctx
 
 	storeRepo := repo.NewMemoryRepo()
-	externalSvc := external.New(storeRepo)
+	externalSvc := external.New(storeRepo, cfg.MainServer.URL)
 	productsSvc := products.New(storeRepo)
 	ordersSvc := orders.New(storeRepo)
 
+	models.MarketID, _ = uuid.Parse("00000000-0000-0000-0000-000000000042")
 	fiberApp := fiber.New()
 	srv := server.New(fiberApp, productsSvc, externalSvc, ordersSvc, cfg.MainServer.URL)
 	srv.SetupRoutes()

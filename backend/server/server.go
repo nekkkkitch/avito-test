@@ -13,6 +13,12 @@ type Server struct {
 	val    *validator.Validate
 }
 
+// @title Avito.Kitchen API
+// @version 1.0
+// @description Market service API
+// @host localhost:8080
+// @BasePath /
+
 func New(app *fiber.App, m ProductsSvc, c CartSvc, e ExternalSvc) *Server {
 	s := &Server{
 		app:    app,

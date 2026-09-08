@@ -7,11 +7,11 @@ import (
 )
 
 type Cart struct {
-	ID         uuid.UUID  `json:"id"`
-	UserID     uuid.UUID  `json:"user_id"`
-	Products   []Product  `json:"products"`
-	InProcess  bool       `json:"in_process"`
-	FinishedAt *time.Time `json:"finished_at"`
+	ID        uuid.UUID  `json:"id"`
+	UserID    uuid.UUID  `json:"user_id"`
+	Products  []Product  `json:"products"`
+	InProcess bool       `json:"in_process"`
+	OrderedAt *time.Time `json:"ordered_at"`
 }
 
 type Order struct {

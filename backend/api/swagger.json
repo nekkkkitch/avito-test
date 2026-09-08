@@ -1,8 +1,13 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "Market service API",
+        "title": "Avito.Kitchen API",
+        "contact": {},
+        "version": "1.0"
     },
+    "host": "localhost:8080",
+    "basePath": "/",
     "paths": {
         "/api/cart": {
             "get": {
@@ -368,14 +373,14 @@
         "models.Cart": {
             "type": "object",
             "properties": {
-                "finished_at": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "string"
                 },
                 "in_process": {
                     "type": "boolean"
+                },
+                "ordered_at": {
+                    "type": "string"
                 },
                 "products": {
                     "type": "array",
@@ -408,7 +413,7 @@
                 "max_price": {
                     "type": "integer",
                     "maximum": 99999999,
-                    "minimum": 1
+                    "minimum": 0
                 },
                 "min_price": {
                     "type": "integer",

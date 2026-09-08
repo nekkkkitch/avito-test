@@ -11,7 +11,7 @@ const swaggerHTML = `<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>DnDhh API</title>
+  <title>Avito.Kitchen API</title>
   <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
 </head>
 <body>

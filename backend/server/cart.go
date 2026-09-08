@@ -36,6 +36,7 @@ type AddToCartReq struct {
 // @Failure 500 {object} error "Internal Server Error"
 // @Router /api/cart/add [post]
 func (a *Server) AddProductToCart(c fiber.Ctx) error {
+	slog.Info("Server: AddProductToCart: got called", "body", c.Body())
 	var req AddToCartReq
 	req.UserID = models.TestUserId
 	if err := c.Bind().Body(&req); err != nil {
@@ -74,6 +75,7 @@ type DeleteFromCartReq struct {
 // @Failure 500 {object} error "Internal Server Error"
 // @Router /api/cart/delete [delete]
 func (a *Server) DeleteProductFromCart(c fiber.Ctx) error {
+	slog.Info("Server: DeleteProductFromCart: got called", "body", c.Body())
 	var req DeleteFromCartReq
 	req.UserID = models.TestUserId
 	if err := c.Bind().Body(&req); err != nil {
@@ -108,13 +110,14 @@ type GetCartReq struct {
 // @Failure 500 {object} error "Internal Server Error"
 // @Router /api/cart [get]
 func (a *Server) GetCart(c fiber.Ctx) error {
+	slog.Info("Server: GetCart: got called", "body", c.Body())
 	var req GetCartReq
-	req.UserID = models.TestUserId
 	if err := c.Bind().Body(&req); err != nil {
 		slog.Error("API: GetCart: can't bind body", "err", err)
 		return fiber.NewError(fiber.ErrBadRequest.Code, "bad body")
 	}
 
+	req.UserID = models.TestUserId
 	if err := a.val.Struct(req); err != nil {
 		slog.Error("API: GetCart: can't bind body", "err", err)
 		return fiber.NewError(fiber.ErrBadRequest.Code, "bad body")
@@ -150,6 +153,7 @@ type OrderReq struct {
 // @Failure 500 {object} error "Internal Server Error"
 // @Router /api/cart/order [post]
 func (a *Server) Order(c fiber.Ctx) error {
+	slog.Info("Server: Order: got called", "body", c.Body())
 	var req OrderReq
 	req.UserID = models.TestUserId
 	if err := c.Bind().Body(&req); err != nil {
