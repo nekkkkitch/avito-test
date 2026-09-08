@@ -1,0 +1,130 @@
+basePath: /
+definitions:
+  models.Order:
+    properties:
+      id:
+        type: string
+      products:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+      user_id:
+        type: string
+    type: object
+  models.Product:
+    properties:
+      id:
+        type: string
+      market_id:
+        type: string
+      price:
+        maximum: 99999999
+        minimum: 1
+        type: integer
+      title:
+        type: string
+    required:
+    - id
+    - market_id
+    - price
+    - title
+    type: object
+  server.deleteProductReq:
+    properties:
+      id:
+        type: string
+    type: object
+  server.saveOrderReq:
+    properties:
+      order:
+        $ref: '#/definitions/models.Order'
+    type: object
+  server.saveProductReq:
+    properties:
+      product:
+        $ref: '#/definitions/models.Product'
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: Market service API
+  title: Market API
+  version: "1.0"
+paths:
+  /order:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Order payload
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/server.saveOrderReq'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Save order
+      tags:
+      - orders
+  /product:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Delete product payload
+        in: body
+        name: deleteRequest
+        required: true
+        schema:
+          $ref: '#/definitions/server.deleteProductReq'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "502":
+          description: Main server notification failed
+          schema: {}
+      summary: Delete product
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Product payload
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/server.saveProductReq'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request
+          schema: {}
+        "502":
+          description: Main server notification failed
+          schema: {}
+      summary: Save or update product
+      tags:
+      - products
+swagger: "2.0"

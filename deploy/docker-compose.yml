@@ -19,4 +19,11 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
-      
+  market:
+    env_file:
+      - "config.env"
+    build:
+      context: ../market
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
