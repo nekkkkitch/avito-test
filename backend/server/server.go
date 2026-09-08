@@ -24,18 +24,20 @@ func New(app *fiber.App, m ProductsSvc, c CartSvc, e ExternalSvc) *Server {
 	return s
 }
 
-func (a *Server) SetupRoutes() {
-	api := a.app.Group("/api")
+func (s *Server) SetupRoutes() {
+	api := s.app.Group("/api")
 
-	api.Get("/markets", a.GetMarkets)
-	api.Post("/filter", a.FilterProducts)
-	api.Get("/product/:id", a.GetProductCard)
+	api.Get("/markets", s.GetMarkets)
+	api.Post("/filter", s.FilterProducts)
+	api.Get("/product/:id", s.GetProductCard)
 
-	api.Post("/cart/add", a.AddProductToCart)
-	api.Delete("/cart/delete", a.DeleteProductFromCart)
-	api.Get("/cart", a.GetCart)
-	api.Post("/cart/order", a.Order)
+	api.Post("/cart/add", s.AddProductToCart)
+	api.Delete("/cart/delete", s.DeleteProductFromCart)
+	api.Get("/cart", s.GetCart)
+	api.Post("/cart/order", s.Order)
 
-	api.Post("/product", a.SetProduct)
-	api.Delete("/product/:id", a.DeleteProduct)
+	api.Post("/product", s.SetProduct)
+	api.Delete("/product/:id", s.DeleteProduct)
+
+	s.setupSwagger()
 }

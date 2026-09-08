@@ -1,0 +1,362 @@
+definitions:
+  models.Cart:
+    properties:
+      finished_at:
+        type: string
+      id:
+        type: string
+      in_process:
+        type: boolean
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+      user_id:
+        type: string
+    type: object
+  models.Filter:
+    properties:
+      limit:
+        maximum: 100
+        minimum: 1
+        type: integer
+      market_id:
+        items:
+          type: string
+        type: array
+      max_price:
+        maximum: 99999999
+        minimum: 1
+        type: integer
+      min_price:
+        maximum: 99999999
+        minimum: 1
+        type: integer
+      offset:
+        minimum: 0
+        type: integer
+      title:
+        type: string
+    required:
+    - limit
+    type: object
+  models.Market:
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  models.Product:
+    properties:
+      id:
+        type: string
+      market_id:
+        type: string
+      price:
+        maximum: 99999999
+        minimum: 1
+        type: integer
+      title:
+        type: string
+    required:
+    - id
+    - market_id
+    - price
+    - title
+    type: object
+  server.AddToCartReq:
+    properties:
+      cart_id:
+        type: string
+      product_id:
+        type: string
+      user_id:
+        type: string
+    required:
+    - cart_id
+    - product_id
+    - user_id
+    type: object
+  server.DeleteFromCartReq:
+    properties:
+      cart_id:
+        type: string
+      product_id:
+        type: string
+      user_id:
+        type: string
+    required:
+    - cart_id
+    - product_id
+    - user_id
+    type: object
+  server.DeleteProductRequest:
+    properties:
+      id:
+        type: string
+    required:
+    - id
+    type: object
+  server.GetCartReq:
+    properties:
+      user_id:
+        type: string
+    required:
+    - user_id
+    type: object
+  server.OrderReq:
+    properties:
+      cart_id:
+        type: string
+      user_id:
+        type: string
+    required:
+    - cart_id
+    - user_id
+    type: object
+info:
+  contact: {}
+paths:
+  /api/cart:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Get cart by user
+        in: body
+        name: getCartRequest
+        required: true
+        schema:
+          $ref: '#/definitions/server.GetCartReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Cart'
+        "400":
+          description: Bad request
+          schema: {}
+        "401":
+          description: Unauthorized
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get cart
+      tags:
+      - cart
+  /api/cart/add:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Add something to cart
+        in: body
+        name: addRequest
+        required: true
+        schema:
+          $ref: '#/definitions/server.AddToCartReq'
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+          schema: {}
+        "403":
+          description: Forbidden
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Add product to cart
+      tags:
+      - cart
+  /api/cart/delete:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Delete product from cart
+        in: body
+        name: deleteRequest
+        required: true
+        schema:
+          $ref: '#/definitions/server.DeleteFromCartReq'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request
+          schema: {}
+        "401":
+          description: Unauthorized
+          schema: {}
+        "403":
+          description: Forbidden
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Delete product from cart
+      tags:
+      - cart
+  /api/cart/order:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Submit an order for the cart
+        in: body
+        name: orderRequest
+        required: true
+        schema:
+          $ref: '#/definitions/server.OrderReq'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request
+          schema: {}
+        "401":
+          description: Unauthorized
+          schema: {}
+        "403":
+          description: Forbidden
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Order cart
+      tags:
+      - cart
+  /api/filter:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Filter criteria
+        in: body
+        name: filter
+        required: true
+        schema:
+          $ref: '#/definitions/models.Filter'
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Product'
+            type: array
+        "400":
+          description: Bad request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Filter products
+      tags:
+      - market
+  /api/markets:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Market'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get all markets
+      tags:
+      - market
+  /api/product:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Set product data
+        in: body
+        name: product
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Product'
+          type: array
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Set product
+      tags:
+      - product
+  /api/product/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Delete product by ID
+        in: body
+        name: deleteRequest
+        required: true
+        schema:
+          $ref: '#/definitions/server.DeleteProductRequest'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Delete product
+      tags:
+      - product
+    get:
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: Bad request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get product card
+      tags:
+      - market
+swagger: "2.0"

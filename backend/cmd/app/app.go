@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"backend/config"
+	"backend/models"
 	repo "backend/rdb"
 	rdb "backend/rdb/postgres"
 	"backend/server"
@@ -18,6 +19,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -55,6 +57,8 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 
 		return nil, fmt.Errorf("ping postgres: %w", err)
 	}
+
+	models.TestUserId, _ = uuid.Parse("00000000-0000-0000-0000-000000000001")
 
 	queries := rdb.New(pool)
 	cartRepo := repo.NewCartRepo(queries)

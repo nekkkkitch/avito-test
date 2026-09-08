@@ -16,6 +16,16 @@ type ExternalSvc interface {
 	DeleteProduct(ctx context.Context, id uuid.UUID) error
 }
 
+// Компаниям должен выдаваться api ключ для идентификации
+
+// @Tags product
+// @Summary Set product
+// @Accept json
+// @Param product body []models.Product true "Set product data"
+// @Success 200
+// @Failure 400 {object} error "Bad request"
+// @Failure 500 {object} error "Internal Server Error"
+// @Router /api/product [post]
 func (a *Server) SetProduct(c fiber.Ctx) error {
 	var products []models.Product
 	if err := c.Bind().Body(&products); err != nil {
@@ -41,6 +51,15 @@ type DeleteProductRequest struct {
 	ID uuid.UUID `json:"id" validate:"required"`
 }
 
+// @Tags product
+// @Summary Delete product
+// @Accept json
+// @Param deleteRequest body DeleteProductRequest true "Delete product by ID"
+// @Success 200
+// @Failure 400 {object} error "Bad request"
+// @Failure 404 {object} error "Not Found"
+// @Failure 500 {object} error "Internal Server Error"
+// @Router /api/product/{id} [delete]
 func (a *Server) DeleteProduct(c fiber.Ctx) error {
 	var req DeleteProductRequest
 	if err := c.Bind().Body(&req); err != nil {

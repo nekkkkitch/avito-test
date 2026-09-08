@@ -15,6 +15,11 @@ type ProductsSvc interface {
 	GetProductCard(ctx context.Context, id uuid.UUID) (models.Product, error)
 }
 
+// @Tags market
+// @Summary Get all markets
+// @Success 200 {array} models.Market
+// @Failure 500 {object} error "Internal Server Error"
+// @Router /api/markets [get]
 func (a *Server) GetMarkets(c fiber.Ctx) error {
 	markets, err := a.market.GetMarkets(c.Context())
 	if err != nil {
@@ -24,6 +29,14 @@ func (a *Server) GetMarkets(c fiber.Ctx) error {
 	return c.JSON(markets)
 }
 
+// @Tags market
+// @Summary Filter products
+// @Accept json
+// @Param filter body models.Filter true "Filter criteria"
+// @Success 200 {array} models.Product
+// @Failure 400 {object} error "Bad request"
+// @Failure 500 {object} error "Internal Server Error"
+// @Router /api/filter [post]
 func (a *Server) FilterProducts(c fiber.Ctx) error {
 	var filter models.Filter
 	if err := c.Bind().Body(&filter); err != nil {
@@ -42,6 +55,14 @@ func (a *Server) FilterProducts(c fiber.Ctx) error {
 	return c.JSON(products)
 }
 
+// @Tags market
+// @Summary Get product card
+// @Param id path string true "Product ID"
+// @Success 200 {object} models.Product
+// @Failure 400 {object} error "Bad request"
+// @Failure 404 {object} error "Not Found"
+// @Failure 500 {object} error "Internal Server Error"
+// @Router /api/product/{id} [get]
 func (a *Server) GetProductCard(c fiber.Ctx) error {
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {
