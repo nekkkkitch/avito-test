@@ -4,4 +4,5 @@ create table if not exists markets(
     api_link text not null
 );
 
-insert into markets(id, title, api_link) values('00000000-0000-0000-0000-000000000042', 'MegaMarket', 'market');
+create index if not exists ind_market on markets(id);
+insert into markets(id, title, api_link) values('00000000-0000-0000-0000-000000000042', 'MegaMarket', 'market:8081');

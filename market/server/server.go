@@ -6,8 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
-	"market/models"
 	"net/http"
+
+	"market/models"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
@@ -17,7 +18,7 @@ import (
 // @version 1.0
 // @description Market service API
 // @host localhost:8081
-// @BasePath /
+// @BasePath /api
 
 type ProductService interface {
 	ListProducts(ctx context.Context) ([]models.Product, error)
@@ -31,6 +32,7 @@ type ExternalService interface {
 
 type OrderService interface {
 	SaveOrder(ctx context.Context, order models.Order) error
+	ListOrders(ctx context.Context) ([]models.Order, error)
 }
 
 type Server struct {
@@ -52,19 +54,34 @@ func New(app *fiber.App, products ProductService, external ExternalService, orde
 }
 
 func (s *Server) SetupRoutes() {
+	slog.Info("Server: SetupRoutes: got called")
 	api := s.app.Group("/api")
+
 	api.Get("/ping", s.Ping)
+
 	api.Get("/products", s.ListProducts)
 	api.Post("/product", s.SaveProduct)
 	api.Delete("/product", s.DeleteProduct)
+
 	api.Post("/order", s.SaveOrder)
+	api.Get("/orders", s.ListOrders)
+
+	s.setupSwagger()
 }
 
 func (s *Server) Ping(c fiber.Ctx) error {
+	slog.Info("Server: Ping: got called")
 	return c.SendStatus(200)
 }
 
+// @Tags products
+// @Summary List products
+// @Success 200 {object} []models.Product
+// @Failure 400 {object} error "Bad request"
+// @Failure 502 {object} error "Main server notification failed"
+// @Router /products [get]
 func (s *Server) ListProducts(c fiber.Ctx) error {
+	slog.Info("Server: ListProducts: got called")
 	products, err := s.productsSvc.ListProducts(c.Context())
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
@@ -85,13 +102,20 @@ type saveProductReq struct {
 // @Failure 502 {object} error "Main server notification failed"
 // @Router /product [post]
 func (s *Server) SaveProduct(c fiber.Ctx) error {
+	slog.Info("Server: SaveProduct: got called", "product", c.Body())
 	var req saveProductReq
 	if err := c.Bind().Body(&req); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "bad body")
 	}
 
 	p := req.Product
-	if p.ID == uuid.Nil || p.MarketID == uuid.Nil || p.Title == "" || p.Price <= 0 {
+	if p.ID == uuid.Nil {
+		p.ID, _ = uuid.NewRandom()
+	}
+
+	p.MarketID = models.MarketID
+
+	if p.Title == "" || p.Price <= 0 {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid product")
 	}
 
@@ -121,6 +145,7 @@ type deleteProductReq struct {
 // @Failure 502 {object} error "Main server notification failed"
 // @Router /product [delete]
 func (s *Server) DeleteProduct(c fiber.Ctx) error {
+	slog.Info("Server: DeleteProduct: got called", "body", c.Body())
 	var req deleteProductReq
 	if err := c.Bind().Body(&req); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "bad body")
@@ -141,38 +166,51 @@ func (s *Server) DeleteProduct(c fiber.Ctx) error {
 	return c.SendStatus(http.StatusOK)
 }
 
-type saveOrderReq struct {
-	Order models.Order `json:"order"`
-}
-
 // @Tags orders
 // @Summary Save order
 // @Accept json
-// @Param order body saveOrderReq true "Order payload"
+// @Param order body models.Order true "Order payload"
 // @Success 200
 // @Failure 400 {object} error "Bad request"
 // @Failure 409 {object} error "Conflict"
 // @Failure 500 {object} error "Internal Server Error"
 // @Router /order [post]
 func (s *Server) SaveOrder(c fiber.Ctx) error {
-	var req saveOrderReq
-	if err := c.Bind().Body(&req); err != nil {
+	slog.Info("Server: SaveOrder: got called", "order", c.Body())
+	var order models.Order
+	if err := c.Bind().Body(&order); err != nil {
+		slog.Error("Server: SaveOrder: bind", "err", err)
 		return fiber.NewError(fiber.StatusBadRequest, "bad body")
 	}
-
-	order := req.Order
 	if order.ID == uuid.Nil || order.UserID == uuid.Nil || len(order.Products) == 0 {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid order")
 	}
-
 	if err := s.ordersSvc.SaveOrder(c.Context(), order); err != nil {
+		slog.Error("Server: SaveOrder: save", "err", err)
 		if err.Error() == "duplicate order id" {
+			slog.Error("Server: SaveOrder: save", "err", err)
 			return fiber.NewError(fiber.StatusConflict, err.Error())
 		}
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
 	return c.SendStatus(http.StatusOK)
+}
+
+// @Tags orders
+// @Summary List orders
+// @Success 200 {object} []models.Order
+// @Failure 400 {object} error "Bad request"
+// @Router /products [get]
+func (s *Server) ListOrders(c fiber.Ctx) error {
+	slog.Info("Server: ListOrder: got called")
+
+	orders, err := s.ordersSvc.ListOrders(c.Context())
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return c.JSON(orders)
 }
 
 func (s *Server) notifyMainServerSetProduct(products []models.Product) error {

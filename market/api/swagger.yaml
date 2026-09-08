@@ -1,15 +1,13 @@
-basePath: /
+basePath: /api
 definitions:
   models.Order:
     properties:
       id:
         type: string
       products:
-        additionalProperties:
-          items:
-            type: string
-          type: array
-        type: object
+        items:
+          type: string
+        type: array
       user_id:
         type: string
     type: object
@@ -36,11 +34,6 @@ definitions:
       id:
         type: string
     type: object
-  server.saveOrderReq:
-    properties:
-      order:
-        $ref: '#/definitions/models.Order'
-    type: object
   server.saveProductReq:
     properties:
       product:
@@ -63,7 +56,7 @@ paths:
         name: order
         required: true
         schema:
-          $ref: '#/definitions/server.saveOrderReq'
+          $ref: '#/definitions/models.Order'
       responses:
         "200":
           description: OK
@@ -127,4 +120,19 @@ paths:
       summary: Save or update product
       tags:
       - products
+  /products:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Order'
+            type: array
+        "400":
+          description: Bad request
+          schema: {}
+      summary: List orders
+      tags:
+      - orders
 swagger: "2.0"

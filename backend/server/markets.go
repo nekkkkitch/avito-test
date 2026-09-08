@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"log/slog"
 
 	"backend/models"
 
@@ -21,6 +22,7 @@ type ProductsSvc interface {
 // @Failure 500 {object} error "Internal Server Error"
 // @Router /api/markets [get]
 func (a *Server) GetMarkets(c fiber.Ctx) error {
+	slog.Info("Server: GetMarkets: got called")
 	markets, err := a.market.GetMarkets(c.Context())
 	if err != nil {
 		return mapError(err)
@@ -38,6 +40,7 @@ func (a *Server) GetMarkets(c fiber.Ctx) error {
 // @Failure 500 {object} error "Internal Server Error"
 // @Router /api/filter [post]
 func (a *Server) FilterProducts(c fiber.Ctx) error {
+	slog.Info("Server: FilterProducts: got called", "body", c.Body())
 	var filter models.Filter
 	if err := c.Bind().Body(&filter); err != nil {
 		return fiber.NewError(fiber.ErrBadRequest.Code, "bad body")
@@ -64,6 +67,7 @@ func (a *Server) FilterProducts(c fiber.Ctx) error {
 // @Failure 500 {object} error "Internal Server Error"
 // @Router /api/product/{id} [get]
 func (a *Server) GetProductCard(c fiber.Ctx) error {
+	slog.Info("Server: GetProductCard: got called", "id", c.Params("id"))
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {
 		return fiber.NewError(fiber.ErrBadRequest.Code, "bad id")

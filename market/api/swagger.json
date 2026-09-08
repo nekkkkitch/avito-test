@@ -7,7 +7,7 @@
         "version": "1.0"
     },
     "host": "localhost:8081",
-    "basePath": "/",
+    "basePath": "/api",
     "paths": {
         "/order": {
             "post": {
@@ -25,7 +25,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/server.saveOrderReq"
+                            "$ref": "#/definitions/models.Order"
                         }
                     }
                 ],
@@ -119,6 +119,29 @@
                     }
                 }
             }
+        },
+        "/products": {
+            "get": {
+                "tags": [
+                    "orders"
+                ],
+                "summary": "List orders",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Order"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {}
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -129,12 +152,9 @@
                     "type": "string"
                 },
                 "products": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
+                    "type": "array",
+                    "items": {
+                        "type": "string"
                     }
                 },
                 "user_id": {
@@ -172,14 +192,6 @@
             "properties": {
                 "id": {
                     "type": "string"
-                }
-            }
-        },
-        "server.saveOrderReq": {
-            "type": "object",
-            "properties": {
-                "order": {
-                    "$ref": "#/definitions/models.Order"
                 }
             }
         },

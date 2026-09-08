@@ -31,7 +31,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/server.saveOrderReq"
+                            "$ref": "#/definitions/models.Order"
                         }
                     }
                 ],
@@ -125,6 +125,29 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/products": {
+            "get": {
+                "tags": [
+                    "orders"
+                ],
+                "summary": "List orders",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Order"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {}
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -135,12 +158,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "products": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
+                    "type": "array",
+                    "items": {
+                        "type": "string"
                     }
                 },
                 "user_id": {
@@ -181,14 +201,6 @@ const docTemplate = `{
                 }
             }
         },
-        "server.saveOrderReq": {
-            "type": "object",
-            "properties": {
-                "order": {
-                    "$ref": "#/definitions/models.Order"
-                }
-            }
-        },
         "server.saveProductReq": {
             "type": "object",
             "properties": {
@@ -204,7 +216,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8081",
-	BasePath:         "/",
+	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Market API",
 	Description:      "Market service API",

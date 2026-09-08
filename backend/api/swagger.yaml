@@ -1,12 +1,13 @@
+basePath: /
 definitions:
   models.Cart:
     properties:
-      finished_at:
-        type: string
       id:
         type: string
       in_process:
         type: boolean
+      ordered_at:
+        type: string
       products:
         items:
           $ref: '#/definitions/models.Product'
@@ -26,7 +27,7 @@ definitions:
         type: array
       max_price:
         maximum: 99999999
-        minimum: 1
+        minimum: 0
         type: integer
       min_price:
         maximum: 99999999
@@ -98,13 +99,6 @@ definitions:
     required:
     - id
     type: object
-  server.GetCartReq:
-    properties:
-      user_id:
-        type: string
-    required:
-    - user_id
-    type: object
   server.OrderReq:
     properties:
       cart_id:
@@ -115,20 +109,15 @@ definitions:
     - cart_id
     - user_id
     type: object
+host: localhost:8080
 info:
   contact: {}
+  description: Market service API
+  title: Avito.Kitchen API
+  version: "1.0"
 paths:
   /api/cart:
     get:
-      consumes:
-      - application/json
-      parameters:
-      - description: Get cart by user
-        in: body
-        name: getCartRequest
-        required: true
-        schema:
-          $ref: '#/definitions/server.GetCartReq'
       responses:
         "200":
           description: OK

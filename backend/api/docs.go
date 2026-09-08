@@ -17,24 +17,10 @@ const docTemplate = `{
     "paths": {
         "/api/cart": {
             "get": {
-                "consumes": [
-                    "application/json"
-                ],
                 "tags": [
                     "cart"
                 ],
                 "summary": "Get cart",
-                "parameters": [
-                    {
-                        "description": "Get cart by user",
-                        "name": "getCartRequest",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/server.GetCartReq"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -379,14 +365,14 @@ const docTemplate = `{
         "models.Cart": {
             "type": "object",
             "properties": {
-                "finished_at": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "string"
                 },
                 "in_process": {
                     "type": "boolean"
+                },
+                "ordered_at": {
+                    "type": "string"
                 },
                 "products": {
                     "type": "array",
@@ -419,7 +405,7 @@ const docTemplate = `{
                 "max_price": {
                     "type": "integer",
                     "maximum": 99999999,
-                    "minimum": 1
+                    "minimum": 0
                 },
                 "min_price": {
                     "type": "integer",
@@ -520,17 +506,6 @@ const docTemplate = `{
                 }
             }
         },
-        "server.GetCartReq": {
-            "type": "object",
-            "required": [
-                "user_id"
-            ],
-            "properties": {
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
         "server.OrderReq": {
             "type": "object",
             "required": [
@@ -551,12 +526,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
-	Host:             "",
-	BasePath:         "",
+	Version:          "1.0",
+	Host:             "localhost:8080",
+	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "Avito.Kitchen API",
+	Description:      "Market service API",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

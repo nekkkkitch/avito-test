@@ -61,7 +61,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	models.TestUserId, _ = uuid.Parse("00000000-0000-0000-0000-000000000001")
 
 	queries := rdb.New(pool)
-	cartRepo := repo.NewCartRepo(queries)
+	cartRepo := repo.NewCartRepo(queries, pool)
 	externalRepo := repo.NewExternalRepo(queries)
 	productsRepo := repo.NewProductsRepo(queries)
 

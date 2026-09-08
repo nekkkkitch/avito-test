@@ -1,0 +1,53 @@
+@startuml
+
+actor "Users" as front
+
+participant "Avito.Kitchen" as avito
+database "Avito DB" as db
+participant "Market" as market
+actor "Market Admin" as admin
+database "Market DB" as market_db
+
+market <- admin: Добавление/Удаление продуктов
+activate market
+market -> market_db
+market -> avito: Передача доступных продуктов
+deactivate market
+activate avito
+avito -> db:
+deactivate avito
+
+front -> avito: Поиск продуктов по фильтру
+activate avito
+avito -> db: Фильтр
+avito <- db: Выдача доступных продуктов
+front <- avito: Возврат продуктов по фильтруы
+deactivate avito
+
+
+front -> avito: Получение корзины
+activate avito
+avito -> db: Получение/Создание корзины
+avito <- db: Выдача корзины
+front <- avito: Возврат корзины
+deactivate avito
+
+front -> avito: Добавление/Удаление товара в корзину
+activate avito
+avito -> db: 
+deactivate avito
+
+front -> avito: Оформление заказа
+activate avito
+avito -> db: Изменить статус корзины на "в процессе"
+avito -> market: Отправление заказа ресторану
+activate market
+market -> market_db: Сохранение заказа
+avito <- market: Заказ получен
+deactivate market
+avito -> db: Отметить корзину как завершенную
+front <- avito: Заказ оформлен
+deactivate avito
+
+
+@enduml

@@ -8,3 +8,5 @@ type Product struct {
 	Title    string    `json:"title" validate:"required"`
 	Price    int       `json:"price" validate:"required,min=1,max=99999999"`
 }
+
+var MarketID uuid.UUID

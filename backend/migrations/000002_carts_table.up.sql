@@ -4,3 +4,5 @@ create table if not exists carts(
     in_process boolean default false,
     ordered_at timestamp default null
 );
+
+create index if not exists ind_find_cart on carts(user_id);
