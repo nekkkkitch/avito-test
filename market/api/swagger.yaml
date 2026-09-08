@@ -6,7 +6,7 @@ definitions:
         type: string
       products:
         items:
-          $ref: '#/definitions/models.Product'
+          type: string
         type: array
       user_id:
         type: string
@@ -33,11 +33,6 @@ definitions:
     properties:
       id:
         type: string
-    type: object
-  server.saveOrderReq:
-    properties:
-      order:
-        $ref: '#/definitions/models.Order'
     type: object
   server.saveProductReq:
     properties:
@@ -76,7 +71,7 @@ paths:
         name: order
         required: true
         schema:
-          $ref: '#/definitions/server.saveOrderReq'
+          $ref: '#/definitions/models.Order'
       responses:
         "200":
           description: OK

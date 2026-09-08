@@ -48,7 +48,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/server.saveOrderReq"
+                            "$ref": "#/definitions/models.Order"
                         }
                     }
                 ],
@@ -154,7 +154,7 @@
                 "products": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Product"
+                        "type": "string"
                     }
                 },
                 "user_id": {
@@ -192,14 +192,6 @@
             "properties": {
                 "id": {
                     "type": "string"
-                }
-            }
-        },
-        "server.saveOrderReq": {
-            "type": "object",
-            "properties": {
-                "order": {
-                    "$ref": "#/definitions/models.Order"
                 }
             }
         },

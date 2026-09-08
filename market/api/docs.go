@@ -54,7 +54,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/server.saveOrderReq"
+                            "$ref": "#/definitions/models.Order"
                         }
                     }
                 ],
@@ -160,7 +160,7 @@ const docTemplate = `{
                 "products": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Product"
+                        "type": "string"
                     }
                 },
                 "user_id": {
@@ -198,14 +198,6 @@ const docTemplate = `{
             "properties": {
                 "id": {
                     "type": "string"
-                }
-            }
-        },
-        "server.saveOrderReq": {
-            "type": "object",
-            "properties": {
-                "order": {
-                    "$ref": "#/definitions/models.Order"
                 }
             }
         },
