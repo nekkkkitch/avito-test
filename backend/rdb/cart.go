@@ -1,11 +1,11 @@
 package repo
 
 import (
-	"backend/models"
-	rdb "backend/rdb/postgres"
 	"context"
 	"errors"
 
+	"backend/models"
+	rdb "backend/rdb/postgres"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
@@ -15,8 +15,8 @@ type CartRepo struct {
 	db *pgx.Conn
 }
 
-func NewCartRepo(q *rdb.Queries) *CartRepo {
-	return &CartRepo{q: q}
+func NewCartRepo(q *rdb.Queries) CartRepo {
+	return CartRepo{q: q}
 }
 
 func (c *CartRepo) GetCart(ctx context.Context, userID uuid.UUID) (models.Cart, error) {
@@ -40,7 +40,7 @@ func (c *CartRepo) GetCart(ctx context.Context, userID uuid.UUID) (models.Cart, 
 
 	products := make([]models.Product, len(cartProducts))
 	for i, cp := range cartProducts {
-		products[i] = models.Product{ID: cp.ID, Name: cp.Title, Price: cp.Price, MarketID: cp.MarketID}
+		products[i] = models.Product{ID: cp.ID, Title: cp.Title, Price: cp.Price, MarketID: cp.MarketID}
 	}
 
 	return models.Cart{ID: cart.ID, UserID: cart.UserID, Products: products}, nil

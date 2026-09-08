@@ -1,10 +1,10 @@
 package repo
 
 import (
-	"backend/models"
-	rdb "backend/rdb/postgres"
 	"context"
 
+	"backend/models"
+	rdb "backend/rdb/postgres"
 	"github.com/google/uuid"
 )
 
@@ -18,7 +18,7 @@ func NewExternalRepo(q *rdb.Queries) ExternalRepo {
 
 func (e *ExternalRepo) SetProduct(ctx context.Context, products []models.Product) error {
 	for _, p := range products {
-		err := e.q.SetProduct(ctx, rdb.SetProductParams{ID: p.ID, MarketID: p.MarketID, Title: p.Name, Price: p.Price})
+		err := e.q.SetProduct(ctx, rdb.SetProductParams{ID: p.ID, MarketID: p.MarketID, Title: p.Title, Price: p.Price})
 		if err != nil {
 			return err
 		}

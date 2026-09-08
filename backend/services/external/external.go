@@ -1,9 +1,9 @@
 package external
 
 import (
-	"backend/models"
 	"context"
 
+	"backend/models"
 	"github.com/google/uuid"
 )
 
